@@ -1,0 +1,719 @@
+[
+    {
+        "id": "31b7ee34f2faf0d2",
+        "type": "tab",
+        "label": "Weather Dashboard",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "661ecf5e58cfc578",
+        "type": "http in",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Weather Dashboard Endpoint",
+        "url": "/weather/dashboard",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 340,
+        "y": 200,
+        "wires": [
+            [
+                "8855d80e0b518b4a"
+            ]
+        ]
+    },
+    {
+        "id": "aeea87a9b29a74d4",
+        "type": "http response",
+        "z": "31b7ee34f2faf0d2",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 710,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "8d2c0c8b44210d51",
+        "type": "template",
+        "z": "31b7ee34f2faf0d2",
+        "name": "HTML Content",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html>\n\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width\">\n  <title>Weather Dashboard</title>\n  <link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\" />\n  <style>\n    .section {\n      top: 0;\n      width: 100%;\n      z-index: 999;\n      background-color: #111111;\n      color: #ccc;\n      border-top: solid 3px #1E97E3;\n      height: 50px;\n    }\n\n\n    .menuitem {\n      margin-top: 12px;\n      display: inline-block;\n      width: 100px;\n    }\n\n    .menulink {\n      height: 40px;\n      padding: 7px;\n      border-bottom: 3px solid transparent;\n    }\n\n    .menulink:hover {\n      border-bottom: 3px solid #1E97E3;\n      text-decoration: none;\n      color: #1E97E3;\n    }\n\n    .footer {\n      margin-top: 12px;\n    }\n\n    .liitem {\n      height: 45px;\n    }\n\n    .skillLine {\n      display: inline-block;\n      width: 100%;\n      min-height: 90px;\n      padding: 3px 4px;\n    }\n\n    skillLineDefault {\n      padding: 3px 4px;\n    }\n\n    div.skill {\n      background: #F58723;\n      border-radius: 3px;\n      color: white;\n      font-weight: bold;\n      padding: 3px 4px;\n      width: 70px;\n    }\n\n    .rating {\n      margin-left: 30px;\n    }\n\n    .footerQR {\n      margin-left: 30%;\n    }\n\n    .leftText {\n      font-size: 41px;\n    }\n\n    .rightText {\n      font-size: 41px;\n      background: #F58723;\n      border-radius: 3px;\n      color: white;\n      padding: 3px 4px;\n    }\n  </style>\n</head>\n\n<body>\n  <div class=\"container\">\n    <div class=\"row\" style=\"margin-top: 30px\">\n      <div class=\"col-xs-10 col-sm-8 col-sm-offset-2 col-xs-offset-1\">\n        <form id=\"searchForm\">\n          <div class=\"form-group\">\n            <div class=\"input-group\">\n              <input id=\"inputSearch\" type=\"text\" class=\"form-control input-lg\" name=\"search\"\n                placeholder=\"Search 'city name' or 'city, country code' \" />\n              <span class=\"input-group-btn\">\"\n                <button id=\"searchSubmit\" type=\"submit\" class=\"btn btn-primary btn-lg ladda-button\"\n                  data-style=\"expand-right\" type=\"submit\"><span class=\"ladda-label\">Search</span></button>\n              </span>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n    <h2 style=\"text-align: center;margin: auto\">{{result.header}}</h2>\n    {{#req.query.search}}\n    <div class=\"container\">\n      <br />\n      <div class=\"row\">\n        <div class=\"col-sm-6 col-lg-4\">\n          <div class=\"panel panel-primary\" style=\"height: 450px;\">\n            <div class=\"panel-heading\">\n              <h4 class=\"text-center\">Current Forecast<span class=\"glyphicon glyphicon-asterisk pull-right\"></span>\n              </h4>\n            </div>\n            <div class=\"panel-body text-center\">\n              <p>\n                <strong>{{result.current.description}}</strong>\n                <img src=\"https://openweathermap.org/img/wn/{{result.current.icon}}@2x.png\" />\n              </p>\n            </div>\n            <ul class=\"list-group list-group-flush\">\n              <li class=\"list-group-item liitem\"><strong>Temperature:</strong>\n                <span class=\"pull-right\">{{result.current.temperature}}</span>\n              </li>\n              <li class=\"list-group-item liitem\"><strong>Feels Like:</strong>\n                <span class=\"pull-right\">{{result.current.feelsLike}}</span>\n              </li>\n              <li class=\"list-group-item liitem\"><strong>Humidity:</strong>\n                <span class=\"pull-right\">{{result.current.humidity}}</span>\n              </li>\n              <li class=\"list-group-item liitem\"><strong>Sunrise:</strong>\n                <span class=\"pull-right\">{{result.current.sunrise}}</span>\n              </li>\n              <li class=\"list-group-item liitem\"><strong>Sunset:</strong>\n                <span class=\"pull-right\">{{result.current.sunset}}</span>\n              </li>\n            </ul>\n          </div>\n        </div>\n        <div class=\"col-sm-6 col-lg-4\">\n          <div class=\"panel panel-primary\" style=\"height: 450px;\">\n            <div class=\"panel-heading\">\n              <h4 class=\"text-center\">5 Day Weather Forecast<span class=\"glyphicon glyphicon-list pull-right\"></span>\n              </h4>\n            </div>\n            <table class=\"table table-hover\">\n              {{#result.fiveDay}}\n              <tr>\n                <td>{{date}}</td>\n                <td>{{temperature}} - {{description}}</td>\n                <td><img style=\"margin-top: -10px;\" src=\"https://openweathermap.org/img/wn/{{icon}}.png\" /></td>\n              </tr>\n              {{/result.fiveDay}}\n            </table>\n          </div>\n        </div>\n        <div class=\"col-sm-6 col-lg-4\">\n          <div class=\"panel panel-primary\" style=\"height: 450px;\">\n            <div class=\"panel-heading\">\n              <h4 class=\"text-center\">About {{result.country.name}}<span\n                  class=\"glyphicon glyphicon-map-marker pull-right\"></span></h4>\n            </div>\n            <div class=\"panel-body text-center\">\n              <img src=\"{{result.country.flagUrl}}\" width=\"40%\" />\n            </div>\n            <ul class=\"list-group list-group-flush\">\n              <li class=\"list-group-item liitem\"><strong>Code:</strong>\n                <span class=\"pull-right\">{{result.country.code}}</span>\n              </li>\n              <li class=\"list-group-item liitem\"><strong>Capital:</strong>\n                <span class=\"pull-right\">{{result.country.capital}}</span>\n              </li>\n              <li class=\"list-group-item liitem\"><strong>Population:</strong>\n                <span class=\"pull-right\">{{result.country.population}}</span>\n              </li>\n              <li class=\"list-group-item liitem\"><strong>Currencies:</strong>\n                <span class=\"pull-right\">{{result.country.currencies}}</span>\n              </li>\n              <li class=\"list-group-item liitem\"><strong>Languages:</strong>\n                <span class=\"pull-right\">{{result.country.languages}}</span>\n              </li>\n            </ul>\n          </div>\n        </div>\n      </div>\n    </div>\n    {{/req.query.search}}\n  </div>\n  <script src=\"https://code.jquery.com/jquery.min.js\"></script>\n  <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js\"></script>\n  <script type=\"text/javascript\">\n    $(document).ready(function (e) {\n      $(\"#searchSubmit\").click(function (e) {\n        e.preventDefault()\n        var search = $('#inputSearch').val()\n        var url = location.protocol + \"//\" + location.host + location.pathname\n        if (!search) return alert(\"Please provide a search term\");\n        url += '?search=' + search;\n        window.location.replace(url);\n      });\n    });\n  </script>\n</body>\n\n</html>",
+        "output": "str",
+        "x": 560,
+        "y": 700,
+        "wires": [
+            [
+                "aeea87a9b29a74d4"
+            ]
+        ]
+    },
+    {
+        "id": "905923027b332c83",
+        "type": "http request",
+        "z": "31b7ee34f2faf0d2",
+        "name": "OWM Get current",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 300,
+        "wires": [
+            [
+                "a59dac86c4875a59"
+            ]
+        ]
+    },
+    {
+        "id": "02e4ee40e214b263",
+        "type": "debug",
+        "z": "31b7ee34f2faf0d2",
+        "name": "msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "error",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 450,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "92ee18423c9b4f9d",
+        "type": "function",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Prep",
+        "func": "msg.url =flow.get('owmUrlCurrentForcast')\nmsg.url +=`?appid=${flow.get('ownAppId')}`\nmsg.url += `&units=${flow.get('ownUnits')}`\nmsg.url += `&q=${msg.req.query.search}`\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 300,
+        "wires": [
+            [
+                "905923027b332c83"
+            ]
+        ]
+    },
+    {
+        "id": "66be7680be7b15ac",
+        "type": "inject",
+        "z": "31b7ee34f2faf0d2",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 290,
+        "y": 100,
+        "wires": [
+            [
+                "d10c7deb80435663"
+            ]
+        ]
+    },
+    {
+        "id": "d10c7deb80435663",
+        "type": "change",
+        "z": "31b7ee34f2faf0d2",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "ownAppId",
+                "pt": "flow",
+                "to": "99d14c85e96939c34ef15546bbd62315",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "ownUnits",
+                "pt": "flow",
+                "to": "metric",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "owmTemperatureUnit",
+                "pt": "flow",
+                "to": "°C",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "owmUrlCurrentForcast",
+                "pt": "flow",
+                "to": "https://api.openweathermap.org/data/2.5/weather",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "dateParams",
+                "pt": "flow",
+                "to": "{\"hour\":\"2-digit\",\"minute\":\"2-digit\",\"hour12\":true}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "owmUrl5DayForcast",
+                "pt": "flow",
+                "to": "https://api.openweathermap.org/data/2.5/forecast",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "restCountryUrl",
+                "pt": "flow",
+                "to": "https://restcountries.com/v3.1/alpha/",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0603ef4f8bac547b",
+        "type": "comment",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Set Memory Variable",
+        "info": "",
+        "x": 310,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "01fb8f1db689ca4f",
+        "type": "comment",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Weather dashboard Flow",
+        "info": "",
+        "x": 330,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "539568dbc8689825",
+        "type": "link in",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Get current forcast",
+        "links": [
+            "dc9fd590e7dac484"
+        ],
+        "x": 295,
+        "y": 300,
+        "wires": [
+            [
+                "92ee18423c9b4f9d"
+            ]
+        ]
+    },
+    {
+        "id": "dc9fd590e7dac484",
+        "type": "link out",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Run get current forcast",
+        "mode": "link",
+        "links": [
+            "539568dbc8689825"
+        ],
+        "x": 865,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "3110faf27b337bed",
+        "type": "comment",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Finalize",
+        "info": "",
+        "x": 290,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "a293584e45cad30e",
+        "type": "comment",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Get current forcast",
+        "info": "",
+        "x": 370,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "08e597aef2f84af3",
+        "type": "comment",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Catch errors",
+        "info": "",
+        "x": 310,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "b18c5450f65d9829",
+        "type": "link in",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Finalize",
+        "links": [
+            "33c883b30ff455e9",
+            "c27972c769627b4f",
+            "41ea57dac6d6c9cc"
+        ],
+        "x": 255,
+        "y": 680,
+        "wires": [
+            [
+                "967b743722082463"
+            ]
+        ]
+    },
+    {
+        "id": "8ac4dfa5cd2881c4",
+        "type": "link out",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Run 5-day",
+        "mode": "link",
+        "links": [
+            "2a56adec10dc7a7d"
+        ],
+        "x": 915,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "1494d9c135b01df8",
+        "type": "catch",
+        "z": "31b7ee34f2faf0d2",
+        "name": "",
+        "scope": null,
+        "uncaught": false,
+        "x": 300,
+        "y": 580,
+        "wires": [
+            [
+                "02e4ee40e214b263",
+                "8bec733291ef28a7"
+            ]
+        ]
+    },
+    {
+        "id": "a59dac86c4875a59",
+        "type": "function",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Process result 1",
+        "func": "let errMsg=null\n\n//check response for error\nif(msg.statusCode>=400){\n    try{\n        errMsg=msg.payload.message\n    }catch(e){\n        errMsg=msg.payload\n    }\n    throw new Error(errMsg)\n}\n\n//process response data\nmsg.countryCode=msg.payload.sys.country\nmsg.result.header=msg.payload.name\n\nlet tmpSunrise=msg.payload.sys.sunrise*1000\ntmpSunrise=new Date(tmpSunrise)\nlet sunrise=tmpSunrise.toLocaleTimeString([],flow.get('dateParams'))\n\nlet tmpSunset = msg.payload.sys.sunset*1000\ntmpSunset = new Date(tmpSunset)\nlet sunset = tmpSunset.toLocaleTimeString([], flow.get('dateParams'))\n\nmsg.result.current={\n    description: msg.payload.weather[0].description,\n    icon: msg.payload.weather[0].icon,\n    temperature: `${Math.round(msg.payload.main.temp)}${flow.get(\"owmTemperatureUnit\")}`,\n    feelsLike: `${Math.round(msg.payload.main.feels_like)}${flow.get(\"owmTemperatureUnit\")}`,\n    humidity: `${msg.payload.main.humidity}%`,\n    sunrise,\n    sunset\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 300,
+        "wires": [
+            [
+                "8ac4dfa5cd2881c4"
+            ]
+        ]
+    },
+    {
+        "id": "33c883b30ff455e9",
+        "type": "link out",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Run finalize",
+        "mode": "link",
+        "links": [
+            "b18c5450f65d9829"
+        ],
+        "x": 565,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "8bec733291ef28a7",
+        "type": "function",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Prep error",
+        "func": "msg.result.header=`${msg.error.message}-\"${msg.req.query.search}\"`\ndelete msg.req.query.search\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 600,
+        "wires": [
+            [
+                "33c883b30ff455e9"
+            ]
+        ]
+    },
+    {
+        "id": "5ea80799eb129d81",
+        "type": "switch",
+        "z": "31b7ee34f2faf0d2",
+        "name": "",
+        "property": "req.query.search",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 780,
+        "y": 200,
+        "wires": [
+            [
+                "dc9fd590e7dac484"
+            ],
+            [
+                "c27972c769627b4f"
+            ]
+        ]
+    },
+    {
+        "id": "c27972c769627b4f",
+        "type": "link out",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Run finalize",
+        "mode": "link",
+        "links": [
+            "b18c5450f65d9829"
+        ],
+        "x": 865,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "8855d80e0b518b4a",
+        "type": "change",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Prep response",
+        "rules": [
+            {
+                "t": "set",
+                "p": "result",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 580,
+        "y": 200,
+        "wires": [
+            [
+                "5ea80799eb129d81"
+            ]
+        ]
+    },
+    {
+        "id": "b2976003628645c7",
+        "type": "http request",
+        "z": "31b7ee34f2faf0d2",
+        "name": "OWM 5 Day forcast",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 380,
+        "wires": [
+            [
+                "ea3c6c689e2fedfc"
+            ]
+        ]
+    },
+    {
+        "id": "ac01460467bcfaee",
+        "type": "function",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Prep",
+        "func": "msg.url =flow.get('owmUrl5DayForcast')\nmsg.url +=`?appid=${flow.get('ownAppId')}`\nmsg.url += `&units=${flow.get('ownUnits')}`\nmsg.url += `&q=${msg.req.query.search}`\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 380,
+        "wires": [
+            [
+                "b2976003628645c7"
+            ]
+        ]
+    },
+    {
+        "id": "2a56adec10dc7a7d",
+        "type": "link in",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Get 5-day",
+        "links": [
+            "8ac4dfa5cd2881c4"
+        ],
+        "x": 295,
+        "y": 380,
+        "wires": [
+            [
+                "ac01460467bcfaee"
+            ]
+        ]
+    },
+    {
+        "id": "9d72648888b17555",
+        "type": "comment",
+        "z": "31b7ee34f2faf0d2",
+        "name": "5-Day Forcast",
+        "info": "",
+        "x": 350,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "eaf2c8587d49dea7",
+        "type": "link out",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Run country info",
+        "mode": "link",
+        "links": [
+            "f90bc691cff0d325"
+        ],
+        "x": 915,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "ea3c6c689e2fedfc",
+        "type": "function",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Process result 2",
+        "func": "let errMsg = null\n\n// First check response for error\nif (msg.statusCode >= 400) {\n    try {\n        errMsg = msg.payload.message\n    } catch (e) {\n        errMsg = msg.payload\n    }\n    throw new Error(errMsg)\n}\n// Process response data\nmsg.result.fiveDay = []\nlet date\nlet tmpDate = null\nlet tmpEntry\nlet x = 0\nlet y = msg.payload.list.length\n\nfor (; x < y; x++) {\n    tmpEntry = msg.payload.list[x]\n    tmpDate = tmpEntry.dt * 1000\n    tmpDate = new Date(tmpDate)\n    date = `${tmpDate.getDate()}/${(tmpDate.getMonth() + 1)}`\n\n    msg.result.fiveDay.push({\n        date,\n        temperature: `${Math.round(tmpEntry.main.temp_max)}${flow.get('owmTemperatureUnit')}`,\n        description: tmpEntry.weather[0].description,\n        icon: tmpEntry.weather[0].icon,\n\n    })\n\n    // We only need 5 entries\n    if (x === 4) break\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 380,
+        "wires": [
+            [
+                "eaf2c8587d49dea7"
+            ]
+        ]
+    },
+    {
+        "id": "ab9e2386855a30d6",
+        "type": "http request",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Get country info",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 560,
+        "y": 460,
+        "wires": [
+            [
+                "339e779ad55ac3aa"
+            ]
+        ]
+    },
+    {
+        "id": "321a3ac61465823e",
+        "type": "function",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Prep",
+        "func": "msg.url = `${flow.get('restCountryUrl')}${msg.countryCode}`\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 460,
+        "wires": [
+            [
+                "ab9e2386855a30d6"
+            ]
+        ]
+    },
+    {
+        "id": "f90bc691cff0d325",
+        "type": "link in",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Get country info",
+        "links": [
+            "eaf2c8587d49dea7"
+        ],
+        "x": 295,
+        "y": 460,
+        "wires": [
+            [
+                "321a3ac61465823e"
+            ]
+        ]
+    },
+    {
+        "id": "335740b6ffd17b81",
+        "type": "comment",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Get country info",
+        "info": "",
+        "x": 360,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "41ea57dac6d6c9cc",
+        "type": "link out",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Run finalize",
+        "mode": "link",
+        "links": [
+            "b18c5450f65d9829"
+        ],
+        "x": 915,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "339e779ad55ac3aa",
+        "type": "function",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Process result 3",
+        "func": "let errMsg = null;\n\n// First check response for error\nif (msg.statusCode >= 400) {\n    errMsg = msg.payload.message || msg.payload;\n    throw new Error(errMsg);\n}\n\n// Process response data\nif (!Array.isArray(msg.payload) || msg.payload.length === 0) {\n    throw new Error(\"Invalid payload format. Expected an array with at least one country object.\");\n}\n\nconst country = msg.payload[0];\nmsg.result.header += `, ${country.name.common}`;\n\nconst currencies = Object.values(country.currencies).map(currency => `${currency.name} (${currency.symbol})`);\nconst languages = Object.values(country.languages);\n\nmsg.result.country = {\n    name: country.name.common,\n    code: country.cca2,\n    capital: country.capital[0],\n    population: new Intl.NumberFormat().format(country.population),\n    currencies: currencies.join(', '),\n    languages: languages.join(', '),\n    flagUrl: country.flags.png\n};\n\nmsg.payload = msg.result;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 460,
+        "wires": [
+            [
+                "41ea57dac6d6c9cc"
+            ]
+        ]
+    },
+    {
+        "id": "967b743722082463",
+        "type": "switch",
+        "z": "31b7ee34f2faf0d2",
+        "name": "Check output",
+        "property": "req.query.output",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "json",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 380,
+        "y": 680,
+        "wires": [
+            [
+                "537506f54444b163"
+            ],
+            [
+                "8d2c0c8b44210d51"
+            ]
+        ]
+    },
+    {
+        "id": "537506f54444b163",
+        "type": "change",
+        "z": "31b7ee34f2faf0d2",
+        "name": "JSON Payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "result",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 560,
+        "y": 660,
+        "wires": [
+            [
+                "aeea87a9b29a74d4"
+            ]
+        ]
+    }
+]
